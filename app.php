@@ -1,4 +1,6 @@
 <?php
+echo '<!DOCTYPE html><html><head><title>Обработка файла</title><meta charset="UTF-8"></head><body>';
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['upload_file'])) {
     $file = $_FILES['upload_file'];
@@ -59,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['upload_file'])) {
             'type' => $type,
             'brand' => trim($parts[3])
         ];
+        // file_put_contents('data.txt', $data, FILE_APPEND);
     }
 
     // Сортировка
@@ -69,8 +72,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['upload_file'])) {
         return strcmp($a['brand'], $b['brand']);
     });
 
+    $resultFilename = 'result.txt';
+    $resultContent = '';
+    
+    foreach ($data as $item) {
+        $resultContent .= sprintf("%d,%s,%s,%s\n",
+            $item['weight'],
+            $item['color'],
+            $item['type'],
+            $item['brand']
+        );
+    }
+    
+    file_put_contents($resultFilename, $resultContent);
+
     // Вывод таблицы
     echo "<h2>Результат</h2>";
+    echo "<a href='$resultFilename' download>$resultFilename</a></p>";;
     echo '<table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">';
     echo '<tr><th>Вес</th><th>Цвет</th><th>Тип</th><th>Марка</th></tr>';
     foreach ($data as $item) {
@@ -86,15 +104,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['upload_file'])) {
     echo "Файл не загружен.";
 }
 
+echo '</body></html>';
 
 
 
-
-function logMassege($message, $level){
-    $timestamp = date("Y-m-d H:i:s");
-    $entry = "Errors \n [$timestamp] level: $level | Name: $message \n";
-    file_put_contents('data.txt', $entry, FILE_APPEND);
-}
+// function logMassege($message, $level){
+//     $timestamp = date("Y-m-d H:i:s");
+//     $entry = "Errors \n [$timestamp] level: $level | Name: $message \n";
+//     file_put_contents('data.txt', $entry, FILE_APPEND);
+// }
 
 // function logJson($message, $level = "info"){
 //     $logFile = "log.json";
@@ -120,7 +138,7 @@ function logMassege($message, $level){
 // logJson("err", "error_info");
 
 
-logMassege("error", "err");
+// logMassege("error", "err");
 
 
 
